@@ -1,10 +1,18 @@
 {
-  "name": "refina-investment",
+  "name": "blip-take-home-test",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "E-Commerce REST API Backend Developer Test",
+  "main": "src/main.js",
   "scripts": {
+    "start": "node src/main.js",
+    "dev": "nodemon src/main.js",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:seed": "prisma db seed",
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "prisma": {
+    "seed": "node prisma/seed/seed.js"
   },
   "keywords": [],
   "author": "",

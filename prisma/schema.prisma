@@ -12,33 +12,3 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
-
-model AssetCode {
-  code      String    @id @unique
-  name      String
-  unit      String?
-  toUSD     Decimal?  @db.Decimal(18, 8)
-  toEUR     Decimal?  @db.Decimal(18, 8)
-  toIDR     Decimal?  @db.Decimal(18, 8)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
-
-  @@map("asset_codes")
-}
-
-model Investment {
-  id               String    @id @default(uuid())
-  assetCodeId      String
-  userId           String
-  quantity         Float
-  initialValuation Float
-  date             DateTime
-  description      String
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
-  deletedAt        DateTime?
-
-  @@index([assetCodeId])
-  @@map("investments")
-}

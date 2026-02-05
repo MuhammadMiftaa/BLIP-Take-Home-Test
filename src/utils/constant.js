@@ -32,20 +32,3 @@ export const ERROR_MESSAGES = {
   // Server
   INTERNAL_SERVER_ERROR: "Internal server error",
 };
-
-// Valid status transitions
-// Format: { fromStatus: { role: [allowedToStatuses] } }
-export const STATUS_TRANSITIONS = {
-  [ORDER_STATUS_PENDING]: {
-    [USER_ROLE_ADMIN]: [ORDER_STATUS_PAID, ORDER_STATUS_CANCELLED],
-    [USER_ROLE_STAFF]: [ORDER_STATUS_CANCELLED], // Only for their own orders
-  },
-  [ORDER_STATUS_PAID]: {
-    [USER_ROLE_ADMIN]: [ORDER_STATUS_CANCELLED],
-    [USER_ROLE_STAFF]: [], // Staff cannot change PAID orders
-  },
-  [ORDER_STATUS_CANCELLED]: {
-    [USER_ROLE_ADMIN]: [],
-    [USER_ROLE_STAFF]: [],
-  },
-};

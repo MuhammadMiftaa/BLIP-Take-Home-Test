@@ -1,8 +1,6 @@
 import Joi from "joi";
 
-/**
- * Validation schema for login request
- */
+//$ Validation schema for login request
 export const loginSchema = Joi.object({
   email: Joi.string().email().required().messages({
     "string.email": "Please provide a valid email address",

@@ -12,3 +12,40 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+enum Role {
+  ADMIN
+  STAFF
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  CANCELLED
+}
+
+model User {
+  id         Int      @id @default(autoincrement())
+  email      String   @unique
+  password   String
+  role       Role
+  created_at DateTime @default(now())
+
+  @@index([email])
+
+  @@map("users")
+}
+
+model Order {
+  id            Int         @id @default(autoincrement())
+  customer_name String
+  product_name  String
+  quantity      Int
+  status        OrderStatus @default(PENDING)
+  created_at    DateTime    @default(now())
+
+  @@index([status])
+  @@index([created_at])
+
+  @@map("orders")
+}

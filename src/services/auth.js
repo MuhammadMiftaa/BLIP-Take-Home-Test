@@ -40,5 +40,12 @@ export async function login(email, password) {
     role: user.role,
   });
 
-  return { token };
+  return {
+    access_token: token,
+    user: {
+      id: user.id,
+      email: user.email,
+      role: user.role,
+    },
+  };
 }

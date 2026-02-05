@@ -35,17 +35,3 @@ export class NotFoundError extends AppError {
     super(message, 404);
   }
 }
-
-//$ 409 Conflict - Resource conflict (e.g., duplicate entry)
-export class ConflictError extends AppError {
-  constructor(message = "Conflict") {
-    super(message, 409);
-  }
-}
-
-//$ 422 Unprocessable Entity - Invalid status transition
-export class InvalidStatusTransitionError extends AppError {
-  constructor(message = "Invalid status transition") {
-    super(message, 422);
-  }
-}

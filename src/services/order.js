@@ -1,6 +1,6 @@
 import {
   NotFoundError,
-  InvalidStatusTransitionError,
+  ValidationError,
 } from "../utils/errors.js";
 import {
   ERROR_MESSAGES,
@@ -81,7 +81,7 @@ export async function updateOrderStatus(orderId, newStatus, user) {
       toStatus: newStatus,
       role: user.role,
     });
-    throw new InvalidStatusTransitionError(
+    throw new ValidationError(
       ERROR_MESSAGES.INVALID_STATUS_TRANSITION,
     );
   }

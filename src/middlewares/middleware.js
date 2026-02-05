@@ -117,7 +117,8 @@ export function errorHandler(err, req, res, next) {
 
   // Send error response
   res.status(statusCode).json({
-    error: err.isOperational
+    statusCode: statusCode,
+    message: err.isOperational
       ? err.message
       : ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
   });

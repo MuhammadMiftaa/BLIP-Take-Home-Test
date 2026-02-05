@@ -1,5 +1,9 @@
 import { compare, hash } from "bcrypt";
 import { SALT_ROUNDS } from "./constant.js";
+import jwt from "jsonwebtoken";
+import { UnauthorizedError } from "./errors.js";
+import logger from "./logger.js";
+import env from "./env.js";
 
 //$ Hash a plain text password
 export async function hashPassword(password) {

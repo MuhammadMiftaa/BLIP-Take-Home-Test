@@ -13,7 +13,7 @@ export const SALT_ROUNDS = 10;
 // Error Messages
 export const ERROR_MESSAGES = {
   // Authentication
-  INVALID_CREDENTIALS: "Invalid email or password",
+  INVALID_CREDENTIALS: "Invalid credentials",
   TOKEN_REQUIRED: "Authentication token is required",
   TOKEN_INVALID: "Invalid or expired token",
 

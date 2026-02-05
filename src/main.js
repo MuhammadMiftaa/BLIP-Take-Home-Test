@@ -1,4 +1,5 @@
-import "dotenv/config";
+// Import env first to validate all environment variables at startup
+import env from "./utils/env.js";
 import express from "express";
 import logger from "./utils/logger.js";
 import {
@@ -10,7 +11,6 @@ import authRoutes from "./routes/auth.js";
 import orderRoutes from "./routes/order.js";
 
 const app = express();
-const PORT = process.env.PORT || 8080;
 
 // Middleware
 app.use(express.json());
@@ -35,10 +35,10 @@ app.use(notFoundHandler);
 app.use(errorHandler);
 
 // Start server
-app.listen(PORT, () => {
-  logger.info(`Server started on port ${PORT}`);
-  logger.info(`Environment: ${process.env.NODE_ENV || "development"}`);
-  logger.info(`Log level: ${process.env.LOG_LEVEL || "info"}`);
+app.listen(env.PORT, () => {
+  logger.info(`Server started on port ${env.PORT}`);
+  logger.info(`Environment: ${env.NODE_ENV}`);
+  logger.info(`Log level: ${env.LOG_LEVEL}`);
 });
 
 export default app;

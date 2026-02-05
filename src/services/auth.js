@@ -1,5 +1,5 @@
 import { comparePassword } from "../utils/helper.js";
-import { generateToken } from "../utils/jwt.js";
+import { generateToken } from "../utils/helper.js";
 import { UnauthorizedError } from "../utils/errors.js";
 import { ERROR_MESSAGES } from "../utils/constant.js";
 import logger from "../utils/logger.js";

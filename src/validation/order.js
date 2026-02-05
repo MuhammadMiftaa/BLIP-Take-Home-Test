@@ -39,7 +39,6 @@ export const updateOrderStatusSchema = Joi.object({
     }),
 });
 
-
 //$ Validation schema for order ID parameter
 export const orderIdParamSchema = Joi.object({
   id: Joi.number().integer().positive().required().messages({

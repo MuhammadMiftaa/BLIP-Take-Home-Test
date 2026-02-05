@@ -1,19 +1,16 @@
 import { PrismaPg } from "@prisma/adapter-pg";
 import pg from "pg";
-import dotenv from "dotenv";
 import logger from "./logger.js";
+import env from "./env.js";
 import { PrismaClient } from "../../generated/prisma/index.js";
-
-dotenv.config();
 
 //$ Database connection pool configuration
 const poolConfig = {
-  connectionString: process.env.DATABASE_URL,
-  max: parseInt(process.env.DB_MAX_OPEN_CONN, 10) || 10,
-  min: parseInt(process.env.DB_MIN_IDLE_CONN, 10) || 2,
-  idleTimeoutMillis: parseInt(process.env.DB_IDLE_TIMEOUT_MS, 10) || 30000,
-  connectionTimeoutMillis:
-    parseInt(process.env.DB_CONNECTION_TIMEOUT_MS, 10) || 5000,
+  connectionString: env.DATABASE_URL,
+  max: env.DB_MAX_OPEN_CONN,
+  min: env.DB_MIN_IDLE_CONN,
+  idleTimeoutMillis: env.DB_IDLE_TIMEOUT_MS,
+  connectionTimeoutMillis: env.DB_CONNECTION_TIMEOUT_MS,
 };
 
 logger.info("Database pool configuration", {

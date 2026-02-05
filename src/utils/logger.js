@@ -1,10 +1,11 @@
 import winston from "winston";
+import env from "./env.js";
 
 //~ Log levels (from highest to lowest priority)
 //~ error: 0, warn: 1, info: 2, http: 3, verbose: 4, debug: 5, silly: 6
 
-//$ Get log level from environment variable, default to 'info'
-let currentLogLevel = process.env.LOG_LEVEL || "info";
+//$ Get log level from environment variable
+let currentLogLevel = env.LOG_LEVEL;
 
 //$ Custom format for console output
 const consoleFormat = winston.format.combine(

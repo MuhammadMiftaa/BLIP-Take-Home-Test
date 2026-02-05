@@ -5,7 +5,6 @@ import {
 import {
   ERROR_MESSAGES,
   ORDER_STATUS_PENDING,
-  STATUS_TRANSITIONS,
 } from "../utils/constant.js";
 import logger from "../utils/logger.js";
 import { prismaClient } from "../utils/prisma.js";

@@ -177,13 +177,6 @@ The server will start on the port specified in your `.env` file.
 | PATCH  | `/orders/:id/status` | ✅   | Update order status     |
 | GET    | `/health`            | ❌   | Health check endpoint   |
 
-### Order Status Transitions
-
-| From    | To        | Allowed Roles |
-| ------- | --------- | ------------- |
-| PENDING | PAID      | ADMIN only    |
-| PENDING | CANCELLED | ADMIN, STAFF  |
-| PAID    | CANCELLED | ADMIN only    |
 
 ## Environment Variables
 

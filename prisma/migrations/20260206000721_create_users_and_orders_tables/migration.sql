@@ -7,8 +7,8 @@ CREATE TYPE "OrderStatus" AS ENUM ('PENDING', 'PAID', 'CANCELLED');
 -- CreateTable
 CREATE TABLE "users" (
     "id" SERIAL NOT NULL,
-    "email" TEXT NOT NULL,
-    "password" TEXT NOT NULL,
+    "email" VARCHAR(50) NOT NULL,
+    "password" VARCHAR(255) NOT NULL,
     "role" "Role" NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -18,8 +18,8 @@ CREATE TABLE "users" (
 -- CreateTable
 CREATE TABLE "orders" (
     "id" SERIAL NOT NULL,
-    "customer_name" TEXT NOT NULL,
-    "product_name" TEXT NOT NULL,
+    "customer_name" VARCHAR(100) NOT NULL,
+    "product_name" VARCHAR(100) NOT NULL,
     "quantity" INTEGER NOT NULL,
     "status" "OrderStatus" NOT NULL DEFAULT 'PENDING',
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,

@@ -49,7 +49,7 @@ describe("Auth Service", () => {
       role: "ADMIN",
     };
 
-    it("should login successfully with valid credentials and return token", async () => {
+    it("should login successfully with valid credentials and return access_token", async () => {
       mockPrismaClient.user.findUnique.mockResolvedValue(validUser);
       mockHelper.comparePassword.mockResolvedValue(true);
       mockHelper.generateToken.mockReturnValue("jwt-token-123");
@@ -57,7 +57,7 @@ describe("Auth Service", () => {
       const result = await login("admin@example.com", "password123");
 
       expect(result).toEqual({
-        token: "jwt-token-123",
+        access_token: "jwt-token-123",
         user: {
           id: 1,
           email: "admin@example.com",
@@ -83,7 +83,7 @@ describe("Auth Service", () => {
 
       await expect(
         login("nonexistent@example.com", "password123"),
-      ).rejects.toThrow("Invalid email or password");
+      ).rejects.toThrow("Invalid credentials");
       expect(mockHelper.comparePassword).not.toHaveBeenCalled();
     });
 
@@ -92,7 +92,7 @@ describe("Auth Service", () => {
       mockHelper.comparePassword.mockResolvedValue(false);
 
       await expect(login("admin@example.com", "wrongpassword")).rejects.toThrow(
-        "Invalid email or password",
+        "Invalid credentials",
       );
       expect(mockHelper.generateToken).not.toHaveBeenCalled();
     });
@@ -101,7 +101,7 @@ describe("Auth Service", () => {
       mockPrismaClient.user.findUnique.mockResolvedValue(null);
 
       await expect(login("", "password123")).rejects.toThrow(
-        "Invalid email or password",
+        "Invalid credentials",
       );
     });
 
@@ -110,7 +110,7 @@ describe("Auth Service", () => {
       mockHelper.comparePassword.mockResolvedValue(false);
 
       await expect(login("admin@example.com", "")).rejects.toThrow(
-        "Invalid email or password",
+        "Invalid credentials",
       );
     });
 

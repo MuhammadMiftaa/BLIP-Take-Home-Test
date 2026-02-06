@@ -32,7 +32,7 @@ jest.unstable_mockModule("../../src/utils/logger.js", () => ({
 // Import after mocking
 const authHandler = await import("../../src/handlers/auth.js");
 const orderHandler = await import("../../src/handlers/order.js");
-const { UnauthorizedError, ValidationError, NotFoundError, ForbiddenError } =
+const { UnauthorizedError, ValidationError, NotFoundError } =
   await import("../../src/utils/errors.js");
 
 describe("Handlers", () => {
@@ -56,26 +56,23 @@ describe("Handlers", () => {
 
   describe("Auth Handler", () => {
     describe("login", () => {
-      it("should return 200 with token on successful login", async () => {
+      it("should return access_token on successful login", async () => {
         mockReq.body = { email: "admin@example.com", password: "password123" };
         const loginResult = {
-          token: "jwt-token",
+          access_token: "jwt-token",
           user: { id: 1, email: "admin@example.com", role: "ADMIN" },
         };
         mockAuthService.login.mockResolvedValue(loginResult);
 
         await authHandler.login(mockReq, mockRes, mockNext);
 
-        expect(mockRes.status).toHaveBeenCalledWith(200);
-        expect(mockRes.json).toHaveBeenCalledWith({
-          success: true,
-          data: loginResult,
-        });
+        // Handler uses res.json() directly without status
+        expect(mockRes.json).toHaveBeenCalledWith(loginResult);
       });
 
       it("should call next with error on invalid credentials", async () => {
         mockReq.body = { email: "admin@example.com", password: "wrong" };
-        const error = new UnauthorizedError("Invalid email or password");
+        const error = new UnauthorizedError("Invalid credentials");
         mockAuthService.login.mockRejectedValue(error);
 
         await authHandler.login(mockReq, mockRes, mockNext);
@@ -104,10 +101,8 @@ describe("Handlers", () => {
         await orderHandler.createOrder(mockReq, mockRes, mockNext);
 
         expect(mockRes.status).toHaveBeenCalledWith(201);
-        expect(mockRes.json).toHaveBeenCalledWith({
-          success: true,
-          data: createdOrder,
-        });
+        // Handler returns order directly without wrapper
+        expect(mockRes.json).toHaveBeenCalledWith(createdOrder);
       });
 
       it("should call next with error on service failure", async () => {
@@ -149,11 +144,8 @@ describe("Handlers", () => {
 
         await orderHandler.getOrders(mockReq, mockRes, mockNext);
 
-        expect(mockRes.status).toHaveBeenCalledWith(200);
-        expect(mockRes.json).toHaveBeenCalledWith({
-          success: true,
-          data: orders,
-        });
+        // Handler uses res.json() directly without status for GET
+        expect(mockRes.json).toHaveBeenCalledWith(orders);
       });
 
       it("should return 200 with orders list for STAFF", async () => {
@@ -171,24 +163,16 @@ describe("Handlers", () => {
 
         await orderHandler.getOrders(mockReq, mockRes, mockNext);
 
-        expect(mockRes.status).toHaveBeenCalledWith(200);
-        expect(mockRes.json).toHaveBeenCalledWith({
-          success: true,
-          data: orders,
-        });
+        expect(mockRes.json).toHaveBeenCalledWith(orders);
       });
 
-      it("should return 200 with empty array when no orders", async () => {
+      it("should return empty array when no orders", async () => {
         mockReq.user = { userId: 1, role: "ADMIN" };
         mockOrderService.getOrders.mockResolvedValue([]);
 
         await orderHandler.getOrders(mockReq, mockRes, mockNext);
 
-        expect(mockRes.status).toHaveBeenCalledWith(200);
-        expect(mockRes.json).toHaveBeenCalledWith({
-          success: true,
-          data: [],
-        });
+        expect(mockRes.json).toHaveBeenCalledWith([]);
       });
     });
 
@@ -208,11 +192,8 @@ describe("Handlers", () => {
 
         await orderHandler.updateOrderStatus(mockReq, mockRes, mockNext);
 
-        expect(mockRes.status).toHaveBeenCalledWith(200);
-        expect(mockRes.json).toHaveBeenCalledWith({
-          success: true,
-          data: updatedOrder,
-        });
+        // Handler uses res.json() directly without status for PATCH
+        expect(mockRes.json).toHaveBeenCalledWith(updatedOrder);
       });
 
       it("should return 200 with updated order when ADMIN updates PENDING to CANCELLED", async () => {
@@ -230,11 +211,7 @@ describe("Handlers", () => {
 
         await orderHandler.updateOrderStatus(mockReq, mockRes, mockNext);
 
-        expect(mockRes.status).toHaveBeenCalledWith(200);
-        expect(mockRes.json).toHaveBeenCalledWith({
-          success: true,
-          data: updatedOrder,
-        });
+        expect(mockRes.json).toHaveBeenCalledWith(updatedOrder);
       });
 
       it("should call next with NotFoundError when order not found", async () => {
@@ -253,7 +230,7 @@ describe("Handlers", () => {
         mockReq.user = { userId: 1, role: "ADMIN" };
         mockReq.params = { id: "1" };
         mockReq.body = { status: "PENDING" };
-        const error = new ValidationError("Order is already in PENDING status");
+        const error = new ValidationError("Invalid status transition");
         mockOrderService.updateOrderStatus.mockRejectedValue(error);
 
         await orderHandler.updateOrderStatus(mockReq, mockRes, mockNext);
@@ -265,9 +242,7 @@ describe("Handlers", () => {
         mockReq.user = { userId: 1, role: "ADMIN" };
         mockReq.params = { id: "1" };
         mockReq.body = { status: "CANCELLED" };
-        const error = new ValidationError(
-          "Cannot change status. Only PENDING orders can be updated",
-        );
+        const error = new ValidationError("Invalid status transition");
         mockOrderService.updateOrderStatus.mockRejectedValue(error);
 
         await orderHandler.updateOrderStatus(mockReq, mockRes, mockNext);

@@ -14,6 +14,10 @@ A simple E-Commerce REST API built with Express.js, Prisma ORM, and PostgreSQL.
   - [Running the Application](#running-the-application)
 - [API Endpoints](#api-endpoints)
 - [Environment Variables](#environment-variables)
+- [Testing](#testing)
+  - [Running Tests](#running-tests)
+  - [Test Structure](#test-structure)
+  - [Test Coverage](#test-coverage)
 
 ## Tech Stack
 
@@ -27,6 +31,8 @@ A simple E-Commerce REST API built with Express.js, Prisma ORM, and PostgreSQL.
 | **joi**          | Request validation                         |
 | **winston**      | Logging with multiple transports           |
 | **dotenv**       | Environment variables management           |
+| **jest**         | Testing framework                          |
+| **supertest**    | HTTP integration testing                   |
 | **nodemon**      | Development auto-reload                    |
 
 ## Features
@@ -138,7 +144,7 @@ npm run prisma:seed
 ```
 
 **Default users after seeding:**
-| Email          | Password | Role  |
+| Email | Password | Role |
 |----------------|----------|-------|
 | admin@blip.com | admin123 | ADMIN |
 | staff@blip.com | staff123 | STAFF |
@@ -199,4 +205,105 @@ JWT_EXPIRES_IN=24h
 
 # Logging
 LOG_LEVEL=info
+```
+
+## Testing
+
+This project uses **Jest** for testing with comprehensive unit and integration tests.
+
+### Test Stack
+
+| Package       | Description                       |
+| ------------- | --------------------------------- |
+| **jest**      | Testing framework                 |
+| **supertest** | HTTP integration testing          |
+| **babel**     | ES modules transpilation for Jest |
+
+### Running Tests
+
+```bash
+# Run all tests
+npm test
+
+# Run tests with coverage report
+npm run test:coverage
+
+# Run only unit tests
+npm test -- --testPathPattern=unit-test
+
+# Run only integration tests
+npm test -- --testPathPattern=integration-test
+```
+
+### Test Structure
+
+```
+test/
+├── unit-test/                    # Unit tests
+│   ├── auth.service.test.js      # Auth service tests
+│   ├── order.service.test.js     # Order service tests
+│   ├── handlers.test.js          # Request handlers tests
+│   ├── middleware.test.js        # Middleware logic tests
+│   ├── validation.test.js        # Joi validation tests
+│   ├── errors.test.js            # Error classes tests
+│   ├── constants.test.js         # Constants tests
+│   ├── service-logic.test.js     # Business logic tests
+│   └── setup.js                  # Test setup configuration
+└── integration-test/             # Integration tests
+    ├── auth.integration.test.js  # Auth endpoints tests
+    └── order.integration.test.js # Order endpoints tests
+```
+
+### Test Coverage
+
+| Category        | Tests | Coverage                                              |
+| --------------- | ----- | ----------------------------------------------------- |
+| **Unit Tests**  | 122   | Services, handlers, middleware, validation, errors    |
+| **Integration** | 23    | Full HTTP request/response cycle with mocked database |
+| **Total**       | 145   | Comprehensive coverage of all layers                  |
+
+### Unit Tests
+
+Unit tests validate individual components in isolation with mocked dependencies:
+
+- **Auth Service**: Login flow, token generation, credential validation
+- **Order Service**: CRUD operations, status transitions, authorization
+- **Handlers**: Request/response handling, error propagation
+- **Middleware**: Authentication, authorization, validation, error handling
+- **Validation**: Joi schema validation for all request types
+- **Errors**: Custom error classes (ValidationError, UnauthorizedError, etc.)
+- **Constants**: User roles, order statuses, error messages
+
+### Integration Tests
+
+Integration tests validate complete API flows using supertest:
+
+**Auth Endpoints:**
+
+- ✅ Login with valid credentials
+- ✅ Login with invalid email/password
+- ✅ Validation for missing fields
+
+**Order Endpoints:**
+
+- ✅ Create order (ADMIN only)
+- ✅ Get all orders (ADMIN & STAFF)
+- ✅ Update order status (ADMIN only)
+- ✅ Role-based access control (403 for unauthorized)
+- ✅ Authentication required (401 for missing token)
+- ✅ Status transition validation (400 for invalid transitions)
+- ✅ Not found handling (404 for missing orders)
+
+### Test Configuration
+
+Jest configuration in `jest.config.js`:
+
+```javascript
+export default {
+  testEnvironment: "node",
+  testMatch: ["**/test/**/*.test.js"],
+  forceExit: true, // Force exit after tests complete
+  testTimeout: 10000, // 10 second timeout
+  verbose: true, // Detailed test output
+};
 ```

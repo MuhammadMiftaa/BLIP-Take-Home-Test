@@ -36,6 +36,10 @@ const { ValidationError, NotFoundError } =
   await import("../../src/utils/errors.js");
 
 describe("Order Service", () => {
+  // Mock user object for functions that require it
+  const mockAdminUser = { userId: 1, role: "ADMIN" };
+  const mockStaffUser = { userId: 2, role: "STAFF" };
+
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -57,15 +61,15 @@ describe("Order Service", () => {
 
       mockPrismaClient.order.create.mockResolvedValue(createdOrder);
 
-      const result = await createOrder(orderData);
+      const result = await createOrder(orderData, mockAdminUser.userId);
 
       expect(result).toEqual(createdOrder);
+      // Note: status is set as default in DB, not passed in data
       expect(mockPrismaClient.order.create).toHaveBeenCalledWith({
         data: {
           customer_name: orderData.customer_name,
           product_name: orderData.product_name,
           quantity: orderData.quantity,
-          status: "PENDING",
         },
       });
     });
@@ -80,13 +84,13 @@ describe("Order Service", () => {
           customer_name: "John",
           product_name: "Laptop",
           quantity: 1,
-        }),
+        }, 1),
       ).rejects.toThrow("Database error");
     });
   });
 
   describe("getOrders", () => {
-    it("should return all orders successfully", async () => {
+    it("should return all orders successfully for ADMIN", async () => {
       const orders = [
         {
           id: 1,
@@ -106,7 +110,7 @@ describe("Order Service", () => {
 
       mockPrismaClient.order.findMany.mockResolvedValue(orders);
 
-      const result = await getOrders();
+      const result = await getOrders(mockAdminUser);
 
       expect(result).toEqual(orders);
       expect(mockPrismaClient.order.findMany).toHaveBeenCalledWith({
@@ -114,10 +118,28 @@ describe("Order Service", () => {
       });
     });
 
+    it("should return all orders successfully for STAFF", async () => {
+      const orders = [
+        {
+          id: 1,
+          customer_name: "John",
+          product_name: "Laptop",
+          quantity: 1,
+          status: "PENDING",
+        },
+      ];
+
+      mockPrismaClient.order.findMany.mockResolvedValue(orders);
+
+      const result = await getOrders(mockStaffUser);
+
+      expect(result).toEqual(orders);
+    });
+
     it("should return empty array when no orders exist", async () => {
       mockPrismaClient.order.findMany.mockResolvedValue([]);
 
-      const result = await getOrders();
+      const result = await getOrders(mockAdminUser);
 
       expect(result).toEqual([]);
     });
@@ -165,7 +187,7 @@ describe("Order Service", () => {
       mockPrismaClient.order.findUnique.mockResolvedValue(existingOrder);
       mockPrismaClient.order.update.mockResolvedValue(updatedOrder);
 
-      const result = await updateOrderStatus(1, "PAID");
+      const result = await updateOrderStatus(1, "PAID", mockAdminUser);
 
       expect(result).toEqual(updatedOrder);
       expect(mockPrismaClient.order.update).toHaveBeenCalledWith({
@@ -187,7 +209,7 @@ describe("Order Service", () => {
       mockPrismaClient.order.findUnique.mockResolvedValue(existingOrder);
       mockPrismaClient.order.update.mockResolvedValue(updatedOrder);
 
-      const result = await updateOrderStatus(1, "CANCELLED");
+      const result = await updateOrderStatus(1, "CANCELLED", mockAdminUser);
 
       expect(result).toEqual(updatedOrder);
     });
@@ -195,10 +217,10 @@ describe("Order Service", () => {
     it("should throw NotFoundError when order does not exist", async () => {
       mockPrismaClient.order.findUnique.mockResolvedValue(null);
 
-      await expect(updateOrderStatus(999, "PAID")).rejects.toThrow(
+      await expect(updateOrderStatus(999, "PAID", mockAdminUser)).rejects.toThrow(
         NotFoundError,
       );
-      await expect(updateOrderStatus(999, "PAID")).rejects.toThrow(
+      await expect(updateOrderStatus(999, "PAID", mockAdminUser)).rejects.toThrow(
         "Order not found",
       );
     });
@@ -211,11 +233,11 @@ describe("Order Service", () => {
 
       mockPrismaClient.order.findUnique.mockResolvedValue(existingOrder);
 
-      await expect(updateOrderStatus(1, "PENDING")).rejects.toThrow(
+      await expect(updateOrderStatus(1, "PENDING", mockAdminUser)).rejects.toThrow(
         ValidationError,
       );
-      await expect(updateOrderStatus(1, "PENDING")).rejects.toThrow(
-        "Order is already in PENDING status",
+      await expect(updateOrderStatus(1, "PENDING", mockAdminUser)).rejects.toThrow(
+        "Invalid status transition",
       );
     });
 
@@ -227,7 +249,7 @@ describe("Order Service", () => {
 
       mockPrismaClient.order.findUnique.mockResolvedValue(existingOrder);
 
-      await expect(updateOrderStatus(1, "CANCELLED")).rejects.toThrow(
+      await expect(updateOrderStatus(1, "CANCELLED", mockAdminUser)).rejects.toThrow(
         ValidationError,
       );
     });
@@ -240,7 +262,7 @@ describe("Order Service", () => {
 
       mockPrismaClient.order.findUnique.mockResolvedValue(existingOrder);
 
-      await expect(updateOrderStatus(1, "PAID")).rejects.toThrow(
+      await expect(updateOrderStatus(1, "PAID", mockAdminUser)).rejects.toThrow(
         ValidationError,
       );
     });

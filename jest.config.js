@@ -16,4 +16,6 @@ export default {
   verbose: true,
   testTimeout: 10000,
   testPathIgnorePatterns: ["/node_modules/"],
+  forceExit: true,
+  silent: true,
 };

@@ -48,6 +48,10 @@ const env = {
 
   // Logging
   LOG_LEVEL: required("LOG_LEVEL"),
+
+  // Rate Limiting
+  RATE_LIMIT_WINDOW_MS: requiredInt("RATE_LIMIT_WINDOW_MS"),
+  RATE_LIMIT_MAX_REQUESTS: requiredInt("RATE_LIMIT_MAX_REQUESTS"),
 };
 
 //$ Exit if any env is missing

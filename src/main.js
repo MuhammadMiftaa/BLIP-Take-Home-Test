@@ -2,6 +2,7 @@
 import env from "./utils/env.js";
 import express from "express";
 import logger from "./utils/logger.js";
+import rateLimiter from "./middlewares/rateLimiter.js";
 import {
   errorHandler,
   notFoundHandler,
@@ -15,6 +16,9 @@ const app = express();
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Apply rate limiting to all requests
+app.use(rateLimiter);
 
 // Request logging
 app.use(requestLogger);

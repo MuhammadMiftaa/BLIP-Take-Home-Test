@@ -21,19 +21,20 @@ A simple E-Commerce REST API built with Express.js, Prisma ORM, and PostgreSQL.
 
 ## Tech Stack
 
-| Package          | Description                                |
-| ---------------- | ------------------------------------------ |
-| **express**      | Web framework for Node.js                  |
-| **prisma**       | ORM for database management and migrations |
-| **pg**           | PostgreSQL client for Node.js              |
-| **jsonwebtoken** | JWT authentication                         |
-| **bcrypt**       | Password hashing                           |
-| **joi**          | Request validation                         |
-| **winston**      | Logging with multiple transports           |
-| **dotenv**       | Environment variables management           |
-| **jest**         | Testing framework                          |
-| **supertest**    | HTTP integration testing                   |
-| **nodemon**      | Development auto-reload                    |
+| Package                | Description                                |
+| ---------------------- | ------------------------------------------ |
+| **express**            | Web framework for Node.js                  |
+| **prisma**             | ORM for database management and migrations |
+| **pg**                 | PostgreSQL client for Node.js              |
+| **jsonwebtoken**       | JWT authentication                         |
+| **bcrypt**             | Password hashing                           |
+| **joi**                | Request validation                         |
+| **winston**            | Logging with multiple transports           |
+| **express-rate-limit** | Rate limiting middleware                   |
+| **dotenv**             | Environment variables management           |
+| **jest**               | Testing framework                          |
+| **supertest**          | HTTP integration testing                   |
+| **nodemon**            | Development auto-reload                    |
 
 ## Features
 
@@ -46,6 +47,7 @@ A simple E-Commerce REST API built with Express.js, Prisma ORM, and PostgreSQL.
 | **Centralized Error Handling** | Consistent error responses with custom error classes                  |
 | **Logging**                    | Winston logger with console and file transports                       |
 | **Database Connection Pool**   | Optimized PostgreSQL connection pooling                               |
+| **Rate Limiting**              | Protect API from abuse with configurable rate limits                  |
 
 ## Project Structure
 
@@ -205,6 +207,26 @@ JWT_EXPIRES_IN=24h
 
 # Logging
 LOG_LEVEL=info
+
+# Rate Limiting
+RATE_LIMIT_WINDOW_MS=900000
+RATE_LIMIT_MAX_REQUESTS=100
+```
+
+### Rate Limiting Configuration
+
+| Variable                  | Description                    | Default             |
+| ------------------------- | ------------------------------ | ------------------- |
+| `RATE_LIMIT_WINDOW_MS`    | Time window in milliseconds    | 900000 (15 minutes) |
+| `RATE_LIMIT_MAX_REQUESTS` | Max requests per window per IP | 100                 |
+
+When rate limit is exceeded, the API returns:
+
+```json
+{
+  "statusCode": 429,
+  "message": "Too many requests, please try again later"
+}
 ```
 
 ## Testing

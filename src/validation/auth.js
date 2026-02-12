@@ -11,4 +11,6 @@ export const loginSchema = Joi.object({
     "string.empty": "Password is required",
     "any.required": "Password is required",
   }),
+}).required().messages({
+  "any.required": "Login data is required",
 });
